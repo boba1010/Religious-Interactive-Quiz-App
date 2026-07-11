@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("BlazorWasmPolicy", policy =>
     {
-        policy.WithOrigins("https://localhost:7150")
+        policy.WithOrigins("https://religious-interactive-quiz.onrender.com")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
