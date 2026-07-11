@@ -6,7 +6,7 @@ namespace ReligiousQuizCompetition.Shared.Services
 {
     public class RanksService(ApiClient apiClient)
     {
-        private const string Uri = "https://localhost:7242/api/ranks";
+        private const string Uri = "https://religious-interactive-quiz.onrender.com/api/ranks";
 
         public async Task<ServiceResult<UsersRankDTO>> GetRanks()
         {
