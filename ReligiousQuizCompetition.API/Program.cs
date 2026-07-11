@@ -76,6 +76,9 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+await dbContext.Database.MigrateAsync();
+
 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
 List<Question> questions = 
