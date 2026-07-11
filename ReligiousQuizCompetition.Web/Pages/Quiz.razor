@@ -1,0 +1,100 @@
+﻿@page "/quiz"
+@using ReligiousQuizCompetition.Web.Components
+@using Shared.Services
+@using Shared.DTOs
+@using Shared.Contracts.Requests
+@using Services
+@inject QuizService QuizService
+@inject NavigationManager Nav
+@inject ILocalStorage LocalStorage
+
+<PageTitle>Quiz</PageTitle>
+
+<div class="d-flex flex-column p-3 mt-5" dir="rtl" style="min-height: 100vh;">
+    @if (!IsBusy)
+    {
+        <div class="flex-grow-1 overflow-auto mb-3">
+            @if (quiz != null)
+            {
+                @foreach (var question in quiz.Questions)
+                {
+                    <QuestionDisplay Question="question" OnAnswerSelected="HandleAnswerSelected" />
+                }
+            }
+            else
+            {
+                <div>Loading Quizzes...</div>
+            }
+            @if (!string.IsNullOrEmpty(ErrorMsg))
+            {
+                <div class="text-danger">@ErrorMsg</div>
+            }
+        </div>
+        <button class="btn btn-primary w-100 mt-auto" disabled="@(quiz == null)" @onclick="OnSubmitClick">
+            ارسال
+        </button>       
+    }
+    else
+    {
+        <div class="position-absolute top-50 start-50 translate-middle text-center">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private SubmitQuizRequest SubmitQuizRequest { get; set; } = new();
+    private Dictionary<int, string> AnswersDictionary { get; set; } = new();
+    private QuizDTO quiz;
+    private bool IsBusy { get; set; } = false;
+    private string ErrorMsg { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!UserStatus.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        IsBusy = true;
+        var response = await QuizService.GetQuizAsync();
+        if (response.IsSuccess)
+        {
+            quiz = response.Data;
+            IsBusy = false;
+            return;
+        }
+
+        IsBusy = false;
+        Nav.NavigateTo("/");
+    }
+
+    private void HandleAnswerSelected(KeyValuePair<int, string> updatedAnswer)
+    {
+        AnswersDictionary[updatedAnswer.Key] = updatedAnswer.Value;
+    }
+
+    private async Task OnSubmitClick()
+    {
+        IsBusy = true;
+        SubmitQuizRequest.Id = quiz.Id;
+        SubmitQuizRequest.Answers = AnswersDictionary.Values.ToList();
+        Console.WriteLine(quiz.Id);
+        var response = await QuizService.SubmitQuizAsync(SubmitQuizRequest);
+        if (response.IsSuccess)
+        {
+            var result = response.Data;
+            Console.WriteLine(result.CorrectAnswersCount);
+            await LocalStorage.SetAsync("CorrectAnswersCount", result?.CorrectAnswersCount.ToString());
+            IsBusy = false;
+            Nav.NavigateTo("/");
+            return;
+        }
+
+        ErrorMsg = response.ErrorMessage;
+        IsBusy = false;
+    }
+}

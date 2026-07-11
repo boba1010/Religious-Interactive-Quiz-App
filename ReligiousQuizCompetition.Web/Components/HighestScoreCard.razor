@@ -1,0 +1,19 @@
+﻿@using ReligiousQuizCompetition.Web.Services
+@inject ILocalStorage LocalStorage
+
+<div class="card h-100 text-center justify-content-between p-4" style="background-color: #6D9A88;">
+    <h1 class="text-white">اعلى درجة تم الحصول عليها</h1>
+    <h4 class="align-self-center text-white">@CorrectAnswersCount</h4>
+</div>
+
+@code {
+    private uint CorrectAnswersCount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var localStorageResponse = await LocalStorage.GetAsync("CorrectAnswersCount");
+
+        if (int.TryParse(localStorageResponse, out int result))
+            CorrectAnswersCount = (uint)result;
+    }
+}

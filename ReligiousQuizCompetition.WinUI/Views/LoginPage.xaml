@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ReligiousQuizCompetitionWinUI.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ReligiousQuizCompetitionWinUI.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ReligiousQuizCompetitionWinUI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:UserViewModel}"
+    mc:Ignorable="d">
+
+    <Grid
+        Padding="10"
+        RowSpacing="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Visibility="{Binding NotBusyState}"
+            VerticalAlignment="Center"
+            Spacing="15">
+            <TextBox
+                Style="{StaticResource StretchTextBoxStyle}"
+                PlaceholderText="ادخل اسم مستخدم"
+                Text="{Binding RequestUserLogin.Username, Mode=TwoWay}" />
+            <TextBox 
+                Style="{StaticResource StretchTextBoxStyle}"
+                PlaceholderText="ادخل كلمة مرور"
+                Text="{Binding RequestUserLogin.Password, Mode=TwoWay}" />
+        </StackPanel>
+
+        <StackPanel
+            Visibility="{Binding NotBusyState}"
+            Spacing="10"
+            VerticalAlignment="Bottom"
+            Grid.Row="1">
+            <Button 
+                Style="{StaticResource StretchButtonStyle}"
+                Command="{Binding LoginCommand}"
+                Content="سجل دخول" />
+            <Button 
+                Style="{StaticResource StretchButtonStyle}"
+                Content="ليس لديك حساب؟ انشئ حسابا جديدا"
+                Click="OnCreateNewAccountClick" />
+        </StackPanel>
+
+        <Grid
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Visibility="{Binding BusyState}">
+            <ProgressRing 
+                IsActive="{Binding IsBusy}"
+                IsIndeterminate="True" />
+        </Grid>
+    </Grid>
+</Page>

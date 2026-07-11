@@ -1,0 +1,29 @@
+﻿@inject NavigationManager Nav
+
+<div class="card h-100 text-center d-flex justify-content-between p-4" style="background-color: goldenrod;">
+    <h1 class="text-white">مراكز المتسابقين</h1>
+    <button class="btn btn-primary" 
+            style="background-color: darkgoldenrod; border: darkgoldenrod;" 
+            @onclick="GoToRanksOrShowAlert">
+        تحقق من مركزك
+    </button>
+</div>
+
+<ContentDialog Title="يرجى تسجيل الدخول اولا" OnConfirm="Confirmation" @ref="Alert">
+</ContentDialog>
+
+@code {
+    private ContentDialog Alert { get; set; } = default!;
+
+    private void Confirmation()
+    {
+        Nav.NavigateTo("/login");
+    }
+
+    private void GoToRanksOrShowAlert()
+    {
+        if (UserStatus.IsLoggedIn)
+            Nav.NavigateTo("/ranks");
+        else Alert.Show();
+    }
+}

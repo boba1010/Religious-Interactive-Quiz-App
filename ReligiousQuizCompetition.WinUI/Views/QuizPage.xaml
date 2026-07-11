@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ReligiousQuizCompetitionWinUI.Views.QuizPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ReligiousQuizCompetitionWinUI.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:ReligiousQuizCompetition.Shared.Models"
+    xmlns:templates="using:ReligiousQuizCompetitionWinUI.Templates"
+    xmlns:converters="using:ReligiousQuizCompetitionWinUI.Convertors"
+    xmlns:vm="using:ReligiousQuizCompetitionWinUI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:QuizViewModel}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="MultipleChoiceTemplate">
+            <StackPanel>
+                <TextBlock Text="{Binding QuestionName}" />
+                <RadioButtons 
+                    ItemsSource="{Binding Choices}" 
+                    SelectedItem="{Binding SelectedItems, Mode=TwoWay}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WrittenTemplate">
+            <StackPanel>
+                <TextBlock Text="{Binding QuestionName}" />
+                <TextBox 
+                    PlaceholderText="اجابتك..." 
+                    Text="{Binding Answer, Mode=TwoWay}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <templates:QuestionTemplateSelector x:Key="QuestionSelector"
+            MultipleQuestionTemplate="{StaticResource MultipleChoiceTemplate}" 
+            WrittenTemplate="{StaticResource WrittenTemplate}" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid
+            Visibility="{Binding NotBusyState}"
+            Padding="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListView
+                SelectionMode="None"
+                ItemsSource="{Binding Quiz.Questions}" 
+                ItemTemplateSelector="{StaticResource QuestionSelector}" />
+            <Button 
+                Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                Content="ارسال" 
+                Command="{Binding SubmitQuizCommand}" />
+        </Grid>
+        <Grid
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Visibility="{Binding BusyState}">
+            <ProgressRing
+                IsActive="{Binding IsBusy}"
+                IsIndeterminate="True" />
+        </Grid>
+    </Grid>
+</Page>

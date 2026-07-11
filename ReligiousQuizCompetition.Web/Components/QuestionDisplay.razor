@@ -1,0 +1,46 @@
+﻿@using ReligiousQuizCompetition.Shared.DTOs
+@using ReligiousQuizCompetition.Shared.Models
+
+@switch (Question.QuestionType)
+{
+    case QuestionType.MultipleChoices:
+        <div class="mb-2 p-3">
+            <h5>@Question.QuestionName</h5>
+            @foreach (var option in Question?.Choices)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="@Question.Id" @onchange="() => OnInputChanged(option)" />
+                    <label class="form-check-label">@option</label>
+                </div>
+            }
+        </div>
+        break;
+
+    case QuestionType.EssayQuestion:
+        <div class="mb-2 p-3">
+            <label class="form-label h5">@Question.QuestionName</label>
+            <input type="text" class="form-control" placeholder="اجابتك..." @onchange="(e) => OnInputChanged(e.Value?.ToString())" />
+        </div>
+        break;
+
+    default:
+        <div class="alert alert-warning">Unknown question type.</div>
+        break;
+}
+
+@code {
+    [Parameter]
+    public QuestionDTO Question { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<KeyValuePair<int, string>> OnAnswerSelected { get; set; }
+
+    private async Task OnInputChanged(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return;
+
+        var payload = new KeyValuePair<int, string>(Question.Id, value);
+
+        await OnAnswerSelected.InvokeAsync(payload);
+    }
+}

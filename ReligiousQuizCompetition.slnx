@@ -1,0 +1,16 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="ReligiousQuizCompetition.API/ReligiousQuizCompetition.API.csproj" Id="c3ce1814-154d-44a6-bff1-585c7eef6504" />
+  <Project Path="ReligiousQuizCompetition.Shared/ReligiousQuizCompetition.Shared.csproj" Id="4c4a0eab-d28f-42e2-ab01-43bfbe4f66e6" />
+  <Project Path="ReligiousQuizCompetition.Web/ReligiousQuizCompetition.Web.csproj" Id="26f5f031-809a-49bc-bbd6-c81175a57f51" />
+  <Project Path="ReligiousQuizCompetition.WinUI/ReligiousQuizCompetition.WinUI.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Deploy />
+  </Project>
+</Solution>

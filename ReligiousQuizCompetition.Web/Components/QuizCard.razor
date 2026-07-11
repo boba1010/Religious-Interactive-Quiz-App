@@ -1,0 +1,25 @@
+﻿@inject NavigationManager Nav
+
+<div class="card h-100 text-center d-flex justify-content-between p-4" style="background-color: #0090f0;">
+    <h1 class="text-white">المسابقة</h1>
+    <button class="btn btn-primary" @onclick="GoToQuizOrShowAlert">دخول</button>
+</div>
+
+<ContentDialog Title="يرجى تسجيل الدخول اولا" OnConfirm="Confirmation" @ref="Alert">
+</ContentDialog>
+
+@code {
+    private ContentDialog Alert { get; set; } = default!;
+
+    private void Confirmation()
+    {
+        Nav.NavigateTo("/login");    
+    }
+
+    private void GoToQuizOrShowAlert()
+    {
+        if (UserStatus.IsLoggedIn)
+            Nav.NavigateTo("/quiz");
+        else Alert.Show();
+    }
+}

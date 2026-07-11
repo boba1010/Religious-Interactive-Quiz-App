@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ReligiousQuizCompetitionWinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ReligiousQuizCompetitionWinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

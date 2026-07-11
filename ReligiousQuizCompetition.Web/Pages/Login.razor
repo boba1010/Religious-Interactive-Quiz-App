@@ -1,0 +1,74 @@
+﻿@page "/login"
+@using Shared.Contracts.Requests
+@using Shared.Services
+@inject NavigationManager Nav
+@inject AuthService AuthService
+@inject ITokenService TokenService
+
+<PageTitle>Login</PageTitle>
+
+<div class="container p-3 d-flex flex-column justify-content-between min-vh-100">
+
+    @if (!IsBusy)
+    {
+        <div class="w-100 my-auto">
+            <div class="mb-3">
+                <input type="text" class="form-control form-control-lg text-end" placeholder="ادخل اسم مستخدم" dir="rtl" @bind="RequestUserLogin.Username" />
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control form-control-lg text-end" placeholder="ادخل كلمة مرور" dir="rtl" @bind="RequestUserLogin.Password" />
+            </div>
+            @if (!string.IsNullOrEmpty(ErrorMsg))
+            {
+                <div class="mb-3">
+                    <span class="alert-danger">@ErrorMsg</span>
+                </div>
+            }
+        </div>
+
+        <div class="w-100 mt-auto">
+            <button type="button" class="btn btn-primary btn-lg w-100 mb-2" @onclick="LoginCommand">سجل دخول</button>
+            <NavLink type="button" class="btn btn-outline-secondary btn-lg w-100" href="/signup">ليس لديك حساب؟ انشئ حسابا جديدا</NavLink>
+        </div>
+    }
+    else
+    {
+        <div class="position-absolute top-50 start-50 translate-middle text-center">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+    private RequestUserLogin RequestUserLogin { get; set; } = new();
+    private bool IsBusy { get; set; } = false;
+    private string ErrorMsg { get; set; }
+
+    private async Task LoginCommand()
+    {
+        IsBusy = true;
+
+        var response = await AuthService.LoginAsync(RequestUserLogin);
+
+        if (response.IsSuccess)
+        {
+            var result = response.Data;
+
+            UserStatus.AccessToken = result?.Token;
+            UserStatus.IsLoggedIn = true;
+
+            await TokenService.SetRefreshTokenAsync(result?.RefreshToken);
+
+            IsBusy = false;
+
+            Nav.NavigateTo("/");
+        }
+
+        ErrorMsg = response.ErrorMessage;
+        IsBusy = false;
+    }
+}
+

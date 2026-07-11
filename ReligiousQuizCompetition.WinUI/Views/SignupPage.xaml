@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ReligiousQuizCompetitionWinUI.Views.SignupPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ReligiousQuizCompetitionWinUI.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ReligiousQuizCompetitionWinUI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:UserViewModel}"
+    mc:Ignorable="d">
+
+    <Grid
+        Padding="10"
+        RowSpacing="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Visibility="{Binding NotBusyState}"
+            VerticalAlignment="Center"
+            Spacing="15">
+            <TextBox 
+                Style="{StaticResource StretchTextBoxStyle}"
+                PlaceholderText="ادخل اسمك"
+                Text="{Binding RequestUserSignup.FullName, Mode=TwoWay}" />
+            <TextBox
+                Style="{StaticResource StretchTextBoxStyle}"
+                PlaceholderText="انشئ اسم مستخدم جديد"
+                Text="{Binding RequestUserSignup.Username, Mode=TwoWay}" />
+            <TextBox 
+                Style="{StaticResource StretchTextBoxStyle}"
+                PlaceholderText="انشئ كلمة مرور جديدة"
+                Text="{Binding RequestUserSignup.Password, Mode=TwoWay}" />            
+        </StackPanel>
+
+        <StackPanel
+            Visibility="{Binding NotBusyState}"
+            Spacing="10"
+            VerticalAlignment="Bottom"
+            Grid.Row="1">
+            <Button 
+                Style="{StaticResource StretchButtonStyle}"
+                Command="{Binding SignupCommand}"
+                Content="انشئ حساب جديد" />
+            <Button 
+                Style="{StaticResource StretchButtonStyle}"
+                Content="لديك حساب؟ سجل دخول" />            
+        </StackPanel>
+
+        <Grid
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Visibility="{Binding BusyState}">
+            <ProgressRing 
+                IsActive="{Binding IsBusy}"
+                IsIndeterminate="True" />
+        </Grid>
+    </Grid>
+</Page>

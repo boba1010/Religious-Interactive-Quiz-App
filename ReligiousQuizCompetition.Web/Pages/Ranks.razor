@@ -1,0 +1,72 @@
+﻿@page "/ranks"
+@using Shared.DTOs
+@using Shared.Services
+@inject RanksService RanksService
+@inject NavigationManager Nav
+
+<PageTitle>Ranks</PageTitle>
+
+@if (!IsBusy)
+{
+    <div class="table-responsive mt-5" dir="rtl">
+        
+        <table class="table table-borderless align-middle">
+            
+            <tbody>
+                @foreach (var rank in UsersRanks.Ranks)
+                {
+                    <tr>
+                        <td style="width: 20px;" class="text-nowrap text-muted fw-bold">
+                            @rank.Rank
+                        </td>
+
+                        <td class="w-100">
+                            @rank.FullName
+                        </td>
+
+                        <td class="text-end text-nowrap">
+                            @rank.Score
+                        </td>
+                    </tr>                
+                }
+            </tbody>
+    
+        </table>
+    
+    </div>    
+    
+    <div class="text-danger">@ErrorMsg</div>
+}
+else
+{
+    <div class="position-absolute top-50 start-50 translate-middle text-center">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+
+@code {
+    private UsersRankDTO UsersRanks { get; set; }
+    private bool IsBusy { get; set; }
+    private string ErrorMsg { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!UserStatus.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        IsBusy = true;
+
+        var response = await RanksService.GetRanks();
+        if (response.IsSuccess)
+            UsersRanks = response.Data;
+        else
+            ErrorMsg = response.ErrorMessage;
+
+        IsBusy = false;
+    }
+}
