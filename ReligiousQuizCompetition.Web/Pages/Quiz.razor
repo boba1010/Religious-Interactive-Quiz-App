@@ -64,12 +64,12 @@
         if (response.IsSuccess)
         {
             quiz = response.Data;
+            ErrorMsg = response.ErrorMessage;
             IsBusy = false;
             return;
         }
 
         IsBusy = false;
-        Nav.NavigateTo("/");
     }
 
     private void HandleAnswerSelected(KeyValuePair<int, string> updatedAnswer)
