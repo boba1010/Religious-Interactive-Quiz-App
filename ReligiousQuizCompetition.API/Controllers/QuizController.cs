@@ -28,7 +28,7 @@ namespace ReligiousQuizCompetition.API.Controllers
         {
             var quiz = dbContext.Quizzes
                 .Include(q => q.Questions)
-                .Where(q => q.ExpirationDate > DateTime.UtcNow)
+                .Where(q => q.ExpirationDate < DateTime.UtcNow)
                 .FirstOrDefault();
 
             if (quiz == null)
@@ -66,7 +66,7 @@ namespace ReligiousQuizCompetition.API.Controllers
                 .FirstOrDefault(q => q.Id == request.Id);
             if (quiz == null)
                 return NotFound("Quiz cannot be found.");
-            if (quiz.ExpirationDate > DateTime.UtcNow)
+            if (quiz.ExpirationDate < DateTime.UtcNow)
                 return BadRequest("The Quiz duo time is over");
 
             if (user.AnsweredQuizzes.Contains(quiz.Id))
