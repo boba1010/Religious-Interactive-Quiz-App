@@ -5,7 +5,7 @@ using ReligiousQuizCompetition.API.DbContexts;
 using ReligiousQuizCompetition.Shared.Contracts.Requests;
 using ReligiousQuizCompetition.Shared.Contracts.Responses;
 using ReligiousQuizCompetition.Shared.DTOs;
-using ReligiousQuizCompetition.Shared.Models;
+using ReligiousQuizCompetition.API.Models;
 using System.Security.Claims;
 
 namespace ReligiousQuizCompetition.API.Controllers
@@ -28,6 +28,7 @@ namespace ReligiousQuizCompetition.API.Controllers
         {
             var quiz = dbContext.Quizzes
                 .Include(q => q.Questions)
+                .Where(q => q.ExpirationDate > DateTime.UtcNow)
                 .FirstOrDefault();
 
             if (quiz == null)
@@ -46,7 +47,7 @@ namespace ReligiousQuizCompetition.API.Controllers
                     Id = question.Id,
                     Choices = question.Choices,
                     QuestionName = question.QuestionName,
-                    QuestionType = question.QuestionType
+                    QuestionType = (Shared.DTOs.QuestionType)question.QuestionType
                 });
             }
 
@@ -65,30 +66,32 @@ namespace ReligiousQuizCompetition.API.Controllers
                 .FirstOrDefault(q => q.Id == request.Id);
             if (quiz == null)
                 return NotFound("Quiz cannot be found.");
+            if (quiz.ExpirationDate > DateTime.UtcNow)
+                return BadRequest("The Quiz duo time is over");
 
-            List<Question> questions = [];
+            if (user.AnsweredQuizzes.Contains(quiz.Id))
+                return BadRequest("User already answered this Quiz");
 
-            foreach (var question in quiz.Questions)
-                questions.Add(question);
+            List<Question> questions = quiz.Questions;
 
-            int correctAnswers = 0;
+            int score = 0;
 
             foreach(var answer in request.Answers)
             {
                 foreach (var q in questions)
                 {
                     if (q.Answer == answer)
-                        correctAnswers++;
+                        score += q.Score;
                 }
             }
 
-            user.Score += correctAnswers;
+            user.Score += score;
             dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();
 
             return Ok(new SubmitQuizResponse
             {
-                CorrectAnswersCount = correctAnswers
+                Score = score
             });
         }
     }

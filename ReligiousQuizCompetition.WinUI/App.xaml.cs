@@ -2,6 +2,7 @@
 using ReligiousQuizCompetition.Shared.Services;
 using ReligiousQuizCompetitionWinUI.Services;
 using ReligiousQuizCompetitionWinUI.ViewModels;
+using ReligiousQuizCompetitionWinUI.Views;
 using System.Net.Http;
 
 namespace ReligiousQuizCompetitionWinUI
@@ -29,18 +30,23 @@ namespace ReligiousQuizCompetitionWinUI
         void ConfigureServices(ServiceCollection services)
         {
             services.AddSingleton<QuizService>();
-            services.AddSingleton<QuizViewModel>();
+            services.AddTransient<QuizViewModel>();
+
+            services.AddTransient<HomeViewModel>();
 
             services.AddSingleton<AuthService>();
-            services.AddSingleton<UserViewModel>();
+            services.AddTransient<LoginViewModel>();
+            services.AddTransient<SignupViewModel>();
 
             services.AddSingleton<ISecureStorage, SecureStorage>();
+            services.AddSingleton<ITokenService, TokenService>();
 
             services.AddTransient<BaseViewModel>();
             
-            services.AddSingleton<RanksViewModel>();
+            services.AddTransient<RanksViewModel>();
             services.AddSingleton<RanksService>();
 
+            services.AddSingleton<ApiClient>();
             services.AddSingleton(new HttpClient(
                 new HttpClientHandler
                 {

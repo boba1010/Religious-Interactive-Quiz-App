@@ -2,6 +2,6 @@
 {
     public class SubmitQuizResponse
     {
-        public int CorrectAnswersCount { get; set; }
+        public int Score { get; set; }
     }
 }

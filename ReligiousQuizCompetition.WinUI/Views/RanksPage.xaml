@@ -7,13 +7,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ReligiousQuizCompetitionWinUI.ViewModels"
-    d:DataContext="{d:DesignInstance Type=vm:RanksViewModel}"
+    xmlns:dtos="using:ReligiousQuizCompetition.Shared.DTOs"
     mc:Ignorable="d">
 
     <Grid>
-        <ListView ItemsSource="{Binding Ranks}">
+        <ListView ItemsSource="{x:Bind ViewModel.Ranks, Mode=OneWay}">
             <ListView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="dtos:UserRankDTO">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="20" />
@@ -22,15 +22,15 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock 
                             Grid.Column="0"
-                            Text="{Binding Rank}" />
+                            Text="{x:Bind Rank, Mode=OneWay}" />
                         <TextBlock 
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            Text="{Binding FullName}" />
+                            Text="{x:Bind FullName, Mode=OneWay}" />
                         <TextBlock 
                             Grid.Column="2"
                             HorizontalAlignment="Right"
-                            Text="{Binding Score}" />
+                            Text="{x:Bind Score}" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

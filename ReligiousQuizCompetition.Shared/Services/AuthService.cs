@@ -1,6 +1,6 @@
 ﻿using ReligiousQuizCompetition.Shared.Contracts.Requests;
 using ReligiousQuizCompetition.Shared.Contracts.Responses;
-using ReligiousQuizCompetition.Shared.Models;
+using ReligiousQuizCompetition.Shared.DTOs;
 using System.Net.Http.Json;
 
 namespace ReligiousQuizCompetition.Shared.Services

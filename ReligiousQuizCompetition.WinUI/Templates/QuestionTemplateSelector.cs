@@ -1,4 +1,4 @@
-﻿using ReligiousQuizCompetition.Shared.Models;
+﻿using ReligiousQuizCompetition.Shared.DTOs;
 
 namespace ReligiousQuizCompetitionWinUI.Templates
 {
@@ -9,7 +9,7 @@ namespace ReligiousQuizCompetitionWinUI.Templates
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            var question = (Question)item;
+            var question = (QuestionDTO)item;
 
             return question.QuestionType == QuestionType.MultipleChoices 
                 ? MultipleQuestionTemplate : WrittenTemplate;

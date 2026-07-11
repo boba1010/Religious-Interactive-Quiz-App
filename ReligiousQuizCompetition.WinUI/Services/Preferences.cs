@@ -2,7 +2,7 @@
 
 namespace ReligiousQuizCompetitionWinUI.Services
 {
-    public static class Preferences
+    public static class Preferences<T>
     {
         private static readonly ApplicationDataContainer _settings =
             ApplicationData.Current.LocalSettings;
@@ -17,52 +17,10 @@ namespace ReligiousQuizCompetitionWinUI.Services
             _settings.Values.Clear();
         }
 
-        public static string? Get(string key, string? defaultValue = null)
+        public static T? Get(string key, T? defaultValue = default)
         {
             return _settings.Values.TryGetValue(key, out var value)
-                ? value?.ToString()
-                : defaultValue;
-        }
-
-        public static int Get(string key, int defaultValue = 0)
-        {
-            return _settings.Values.TryGetValue(key, out var value)
-                ? (int)value
-                : defaultValue;
-        }
-
-        public static double Get(string key, double defaultValue = 0)
-        {
-            return _settings.Values.TryGetValue(key, out var value)
-                ? (double)value
-                : defaultValue;
-        }
-
-        public static float Get(string key, float defaultValue = 0)
-        {
-            return _settings.Values.TryGetValue(key, out var value)
-                ? (float)value
-                : defaultValue;
-        }
-
-        public static bool Get(string key, bool defaultValue = false)
-        {
-            return _settings.Values.TryGetValue(key, out var value)
-                ? (bool)value
-                : defaultValue;
-        }
-
-        public static decimal Get(string key, decimal defaultValue = 0)
-        {
-            return _settings.Values.TryGetValue(key, out var value) 
-                ? (decimal)value 
-                : defaultValue;
-        }
-
-        public static long Get(string key, long defaultValue = 0)
-        {
-            return _settings.Values.TryGetValue(key, out var value)
-                ? (long)value
+                ? (T)value
                 : defaultValue;
         }
 
@@ -71,37 +29,7 @@ namespace ReligiousQuizCompetitionWinUI.Services
             _settings.Values.Remove(key);
         }
 
-        public static void Set(string key, string value)
-        {
-            _settings.Values[key] = value;
-        }
-
-        public static void Set(string key, int value)
-        {
-            _settings.Values[key] = value;
-        }
-
-        public static void Set(string key, double value)
-        {
-            _settings.Values[key] = value;
-        }
-
-        public static void Set(string key, float value)
-        {
-            _settings.Values[key] = value;
-        }
-
-        public static void Set(string key, bool value)
-        {
-            _settings.Values[key] = value;
-        }
-
-        public static void Set(string key, decimal value)
-        {
-            _settings.Values[key] = value;
-        }
-
-        public static void Set(string key, long value)
+        public static void Set(string key, T value)
         {
             _settings.Values[key] = value;
         }

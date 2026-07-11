@@ -1,4 +1,4 @@
-﻿namespace ReligiousQuizCompetition.Shared.Models
+﻿namespace ReligiousQuizCompetition.API.Models
 {
     public class RefreshToken
     {

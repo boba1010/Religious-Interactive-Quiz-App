@@ -87,8 +87,8 @@
         if (response.IsSuccess)
         {
             var result = response.Data;
-            Console.WriteLine(result.CorrectAnswersCount);
-            await LocalStorage.SetAsync("CorrectAnswersCount", result?.CorrectAnswersCount.ToString());
+            Console.WriteLine(result.Score);
+            await LocalStorage.SetAsync("Score", result.Score.ToString());
             IsBusy = false;
             Nav.NavigateTo("/");
             return;

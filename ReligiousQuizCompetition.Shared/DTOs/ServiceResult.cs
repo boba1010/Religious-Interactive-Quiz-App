@@ -1,4 +1,4 @@
-﻿namespace ReligiousQuizCompetition.Shared.Models
+﻿namespace ReligiousQuizCompetition.Shared.DTOs
 {
     public class ServiceResult
     {

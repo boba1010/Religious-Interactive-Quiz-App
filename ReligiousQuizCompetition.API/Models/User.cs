@@ -1,4 +1,4 @@
-﻿namespace ReligiousQuizCompetition.Shared.Models
+﻿namespace ReligiousQuizCompetition.API.Models
 {
     public class User
     {
@@ -9,5 +9,6 @@
         public byte[] Salt { get; set; }
 
         public int Score { get; set; }
+        public List<int> AnsweredQuizzes { get; set; } = [];
     }
 }

@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ReligiousQuizCompetitionWinUI.ViewModels"
-    d:DataContext="{d:DesignInstance Type=vm:UserViewModel}"
     mc:Ignorable="d">
 
     <Grid
@@ -19,27 +18,27 @@
         </Grid.RowDefinitions>
 
         <StackPanel
-            Visibility="{Binding NotBusyState}"
+            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
             VerticalAlignment="Center"
             Spacing="15">
             <TextBox
                 Style="{StaticResource StretchTextBoxStyle}"
                 PlaceholderText="ادخل اسم مستخدم"
-                Text="{Binding RequestUserLogin.Username, Mode=TwoWay}" />
+                Text="{x:Bind ViewModel.RequestUserLogin.Username, Mode=TwoWay}" />
             <TextBox 
                 Style="{StaticResource StretchTextBoxStyle}"
                 PlaceholderText="ادخل كلمة مرور"
-                Text="{Binding RequestUserLogin.Password, Mode=TwoWay}" />
+                Text="{x:Bind ViewModel.RequestUserLogin.Password, Mode=TwoWay}" />
         </StackPanel>
 
         <StackPanel
-            Visibility="{Binding NotBusyState}"
+            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
             Spacing="10"
             VerticalAlignment="Bottom"
             Grid.Row="1">
             <Button 
                 Style="{StaticResource StretchButtonStyle}"
-                Command="{Binding LoginCommand}"
+                Command="{x:Bind ViewModel.LoginCommand, Mode=OneWay}"
                 Content="سجل دخول" />
             <Button 
                 Style="{StaticResource StretchButtonStyle}"
@@ -50,9 +49,9 @@
         <Grid
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Visibility="{Binding BusyState}">
+            Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay}">
             <ProgressRing 
-                IsActive="{Binding IsBusy}"
+                IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
                 IsIndeterminate="True" />
         </Grid>
     </Grid>

@@ -5,12 +5,16 @@ namespace ReligiousQuizCompetitionWinUI.Views
 {
     public sealed partial class SignupPage : Page
     {
-        private UserViewModel? ViewModel { get; set; }
+        private SignupViewModel? ViewModel { get; set; }
         public SignupPage()
         {
             InitializeComponent();
-            ViewModel = App.Services.GetService<UserViewModel>();
-            DataContext = ViewModel;
+            ViewModel = App.Services.GetService<SignupViewModel>();
+        }
+
+        private async void OnLoginButtonClick(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(LoginPage));
         }
     }
 }

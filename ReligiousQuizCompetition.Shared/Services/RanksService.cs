@@ -1,5 +1,4 @@
 ﻿using ReligiousQuizCompetition.Shared.DTOs;
-using ReligiousQuizCompetition.Shared.Models;
 using System.Net.Http.Json;
 
 namespace ReligiousQuizCompetition.Shared.Services

@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ReligiousQuizCompetition.API.DbContexts;
+using ReligiousQuizCompetition.API.Models;
 using ReligiousQuizCompetition.API.Services;
-using ReligiousQuizCompetition.Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +13,20 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<AuthService>();
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("AppDb"));
+
+var aivenConnectionString = Environment.GetEnvironmentVariable("AIVEN_POSTGRES_CONN");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    if (!string.IsNullOrEmpty(aivenConnectionString))
+    {
+        options.UseNpgsql(aivenConnectionString);
+    }
+    else
+    {
+        options.UseInMemoryDatabase("AppDb");
+    }
+});
 
 builder.Services.AddCors(options =>
 {
@@ -83,7 +96,8 @@ List<Question> questions =
 Quiz quiz = new()
 {
     Questions = questions,
-    CreationDate = DateTime.UtcNow
+    CreationDate = DateTime.UtcNow,
+    ExpirationDate = DateTime.UtcNow.AddHours(12)
 };
 
 context.Quizzes.Add(quiz);

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ReligiousQuizCompetition.Shared.Models;
+using ReligiousQuizCompetition.API.Models;
 
 namespace ReligiousQuizCompetition.API.DbContexts
 {

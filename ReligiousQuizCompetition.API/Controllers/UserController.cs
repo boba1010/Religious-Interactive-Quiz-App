@@ -5,7 +5,7 @@ using ReligiousQuizCompetition.API.Services;
 using ReligiousQuizCompetition.Shared.Contracts.Requests;
 using ReligiousQuizCompetition.Shared.Contracts.Responses;
 using ReligiousQuizCompetition.Shared.DTOs;
-using ReligiousQuizCompetition.Shared.Models;
+using ReligiousQuizCompetition.API.Models;
 using ReligiousQuizCompetition.Shared.Requests;
 using ReligiousQuizCompetition.Shared.Responses;
 using System.Security.Claims;

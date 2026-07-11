@@ -6,8 +6,8 @@ namespace ReligiousQuizCompetitionWinUI
 {
     public sealed partial class MainWindow : Window
     {
-        public UserViewModel ViewModel { get; set; }
-        public MainWindow(UserViewModel vm)
+        public HomeViewModel ViewModel { get; set; }
+        public MainWindow(HomeViewModel vm)
         {
             InitializeComponent();
 
@@ -28,7 +28,6 @@ namespace ReligiousQuizCompetitionWinUI
         private async void OnNavigated(object? sender, NavigationEventArgs e)
         {
             quizAppTitlebar.IsBackButtonVisible = rootFrame.CanGoBack;
-            quizAppTitlebar.IsBackButtonEnabled = rootFrame.CanGoBack;
         }
 
         private async void OnBackRequested(TitleBar sender, object args)

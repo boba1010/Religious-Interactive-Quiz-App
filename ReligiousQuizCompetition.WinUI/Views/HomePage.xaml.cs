@@ -1,18 +1,17 @@
 using Microsoft.Extensions.DependencyInjection;
 using ReligiousQuizCompetitionWinUI.Services;
 using ReligiousQuizCompetitionWinUI.ViewModels;
-using System.Threading.Tasks;
 
 namespace ReligiousQuizCompetitionWinUI.Views;
 
 public sealed partial class HomePage : Page
 {
-    private UserViewModel ViewModel { get; set; }
+    private HomeViewModel ViewModel { get; set; }
 
     public HomePage()
     {
         InitializeComponent();
-        ViewModel = App.Services.GetService<UserViewModel>();
+        ViewModel = App.Services.GetService<HomeViewModel>();
         Loading += OnLoading;
         DataContext = ViewModel;
     }
@@ -20,12 +19,12 @@ public sealed partial class HomePage : Page
     private async void OnLoading(FrameworkElement sender, object args)
     {
         await ViewModel.VerifyUser();
-        await ViewModel.LoadUserData();
+        ViewModel.LoadHighestScore();
     }
 
     private async void OnQuizButtonClicked(object? sender, RoutedEventArgs e)
     {
-        if (ViewModel.IsLoggedIn)
+        if (UserStateManager.IsLoggedIn)
         {
             Frame.Navigate(typeof(QuizPage));
             return;
@@ -36,7 +35,7 @@ public sealed partial class HomePage : Page
 
     private async void OnRanksButtonClicked(object? sender, RoutedEventArgs e)
     {
-        if (ViewModel.IsLoggedIn)
+        if (UserStateManager.IsLoggedIn)
         {
             Frame.Navigate(typeof(RanksPage));
             return;

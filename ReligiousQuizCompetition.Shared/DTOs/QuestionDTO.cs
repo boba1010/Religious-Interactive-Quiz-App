@@ -1,7 +1,11 @@
-﻿using ReligiousQuizCompetition.Shared.Models;
-
-namespace ReligiousQuizCompetition.Shared.DTOs
+﻿namespace ReligiousQuizCompetition.Shared.DTOs
 {
+    public enum QuestionType
+    {
+        MultipleChoices,
+        EssayQuestion
+    }
+
     public class QuestionDTO
     {
         public int Id { get; set; }
@@ -10,6 +14,5 @@ namespace ReligiousQuizCompetition.Shared.DTOs
         public QuestionType QuestionType { get; set; }
 
         public string Answer { get; set; } = null!;
-        public string SelectedChoice { get; set; } = null!;
     }
 }

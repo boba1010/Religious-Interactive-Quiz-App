@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ReligiousQuizCompetitionWinUI.ViewModels"
-    d:DataContext="{d:DesignInstance Type=vm:UserViewModel}"
     mc:Ignorable="d">
 
     <Grid
@@ -19,7 +18,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid
-            Visibility="{Binding NotBusyState}"
+            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
             CornerRadius="12"
             Background="Goldenrod"
             Margin="10"
@@ -38,7 +37,7 @@
                 Background="DarkGoldenrod" />
         </Grid>
         <Grid
-            Visibility="{Binding NotBusyState}"
+            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
             CornerRadius="12"
             Background="#6D9A88"
             Grid.Column="1"
@@ -55,10 +54,10 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 FontSize="18"
-                Text="{Binding HighestScore}" />
+                Text="{x:Bind ViewModel.HighestScore, Mode=OneWay}" />
         </Grid>
         <Grid
-            Visibility="{Binding NotBusyState}"
+            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
             Background="#0090f0"
             CornerRadius="12"
             Grid.Column="2"
@@ -81,9 +80,9 @@
             Grid.ColumnSpan="3"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Visibility="{Binding BusyState}">
+            Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay}">
             <ProgressRing
-                IsActive="{Binding IsBusy}"
+                IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
                 IsIndeterminate="True" />
         </Grid>
     </Grid>

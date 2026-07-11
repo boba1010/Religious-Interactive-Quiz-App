@@ -6,40 +6,37 @@
     xmlns:local="using:ReligiousQuizCompetitionWinUI.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:ReligiousQuizCompetition.Shared.Models"
+    xmlns:dtos="using:ReligiousQuizCompetition.Shared.DTOs"
     xmlns:templates="using:ReligiousQuizCompetitionWinUI.Templates"
     xmlns:converters="using:ReligiousQuizCompetitionWinUI.Convertors"
     xmlns:vm="using:ReligiousQuizCompetitionWinUI.ViewModels"
-    d:DataContext="{d:DesignInstance Type=vm:QuizViewModel}"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="MultipleChoiceTemplate">
+
+        <DataTemplate x:Key="MultipleChoiceTemplate" x:DataType="dtos:QuestionDTO">
             <StackPanel>
-                <TextBlock Text="{Binding QuestionName}" />
-                <RadioButtons 
-                    ItemsSource="{Binding Choices}" 
-                    SelectedItem="{Binding SelectedItems, Mode=TwoWay}" />
+                <TextBlock Text="{x:Bind QuestionName}" />
+                <RadioButtons ItemsSource="{x:Bind Choices}" SelectedItem="{x:Bind Answer, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="WrittenTemplate">
+        <DataTemplate x:Key="WrittenTemplate" x:DataType="dtos:QuestionDTO">
             <StackPanel>
-                <TextBlock Text="{Binding QuestionName}" />
-                <TextBox 
-                    PlaceholderText="اجابتك..." 
-                    Text="{Binding Answer, Mode=TwoWay}" />
+                <TextBlock Text="{x:Bind QuestionName}" />
+                <TextBox PlaceholderText="اجابتك..." Text="{x:Bind Answer, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
 
-        <templates:QuestionTemplateSelector x:Key="QuestionSelector"
-            MultipleQuestionTemplate="{StaticResource MultipleChoiceTemplate}" 
-            WrittenTemplate="{StaticResource WrittenTemplate}" />
+        <templates:QuestionTemplateSelector x:Key="QuestionSelector" 
+                                        MultipleQuestionTemplate="{StaticResource MultipleChoiceTemplate}" 
+                                        WrittenTemplate="{StaticResource WrittenTemplate}" />
     </Page.Resources>
+
 
     <Grid>
         <Grid
-            Visibility="{Binding NotBusyState}"
+            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
             Padding="15">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -47,21 +44,21 @@
             </Grid.RowDefinitions>
             <ListView
                 SelectionMode="None"
-                ItemsSource="{Binding Quiz.Questions}" 
+                ItemsSource="{x:Bind ViewModel.Quiz.Questions}" 
                 ItemTemplateSelector="{StaticResource QuestionSelector}" />
             <Button 
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
                 Content="ارسال" 
-                Command="{Binding SubmitQuizCommand}" />
+                Command="{x:Bind ViewModel.SubmitQuizCommand, Mode=OneWay}" />
         </Grid>
         <Grid
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Visibility="{Binding BusyState}">
+            Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay}">
             <ProgressRing
-                IsActive="{Binding IsBusy}"
+                IsActive="{x:Bind ViewModel.IsBusy}"
                 IsIndeterminate="True" />
         </Grid>
     </Grid>

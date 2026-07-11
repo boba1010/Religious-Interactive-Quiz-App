@@ -5,18 +5,17 @@ namespace ReligiousQuizCompetitionWinUI.Views;
 
 public sealed partial class RanksPage : Page
 {
-    private RanksViewModel ViewModel { get; set; }
+    public RanksViewModel ViewModel { get; set; }
     public RanksPage()
     {
         InitializeComponent();
 
         ViewModel = App.Services.GetService<RanksViewModel>();
-        DataContext = ViewModel;
-
-        Loading += OnLoading;
+        
+        Loaded += OnLoaded;
     }
 
-    private async void OnLoading(FrameworkElement sender, object args)
+    private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         await ViewModel.GetRanksAsync();
     }

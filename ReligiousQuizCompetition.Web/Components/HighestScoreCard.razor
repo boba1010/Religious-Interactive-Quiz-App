@@ -11,7 +11,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var localStorageResponse = await LocalStorage.GetAsync("CorrectAnswersCount");
+        var localStorageResponse = await LocalStorage.GetAsync("Score");
 
         if (int.TryParse(localStorageResponse, out int result))
             CorrectAnswersCount = (uint)result;

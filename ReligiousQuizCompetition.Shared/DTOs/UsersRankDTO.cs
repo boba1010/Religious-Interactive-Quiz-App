@@ -1,6 +1,4 @@
-﻿using ReligiousQuizCompetition.Shared.Models;
-
-namespace ReligiousQuizCompetition.Shared.DTOs
+﻿namespace ReligiousQuizCompetition.Shared.DTOs
 {
     public class UsersRankDTO
     {

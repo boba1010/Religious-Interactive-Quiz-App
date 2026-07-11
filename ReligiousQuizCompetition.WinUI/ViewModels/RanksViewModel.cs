@@ -1,4 +1,5 @@
 ﻿using ReligiousQuizCompetition.Shared.DTOs;
+using ReligiousQuizCompetition.Shared.Services;
 using ReligiousQuizCompetitionWinUI.Services;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -17,7 +18,15 @@ namespace ReligiousQuizCompetitionWinUI.ViewModels
             Ranks.Clear();
             IsBusy = true;
 
-            var ranksDTO = await ranksService.GetRanks();
+            var response = await ranksService.GetRanks();
+            if (!response.IsSuccess)
+            {
+                await DialogService.ShowAlertAsync("Error", response.ErrorMessage);
+                return;
+            }
+
+            var ranksDTO = response.Data;
+
             foreach (var rank in ranksDTO.Ranks)
                 Ranks.Add(new() { FullName = rank.FullName, Score = rank.Score, Rank = rank.Rank });
 

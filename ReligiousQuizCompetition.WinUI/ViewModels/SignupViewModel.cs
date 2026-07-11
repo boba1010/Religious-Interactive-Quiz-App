@@ -1,0 +1,38 @@
+﻿using CommunityToolkit.Mvvm.Input;
+using ReligiousQuizCompetition.Shared.Contracts.Requests;
+using ReligiousQuizCompetition.Shared.Services;
+using ReligiousQuizCompetitionWinUI.Services;
+using ReligiousQuizCompetitionWinUI.Views;
+using System.Threading.Tasks;
+
+namespace ReligiousQuizCompetitionWinUI.ViewModels
+{
+    public partial class SignupViewModel(NavigationService navService, AuthService authService, ISecureStorage secureStorage) : BaseViewModel
+    {
+        public RequestUserSignup RequestUserSignup { get; set; } = new();
+        [RelayCommand]
+        public async Task SignupAsync()
+        {
+            if (IsBusy)
+                return;
+
+            IsBusy = true;
+            var response = await authService.SignupAsync(RequestUserSignup);
+            if (!response.IsSuccess)
+            {
+                IsBusy = false;
+                await DialogService.ShowAlertAsync("Something wrong has happened please try again", "");
+                return;
+            }
+
+            var result = response.Data;
+
+            await secureStorage.SetAsync("AccessToken", result.Token);
+            await secureStorage.SetAsync("RefreshToken", result.RefreshToken);
+            UserStateManager.IsLoggedIn = true;
+
+            navService.NavigateTo<HomePage>();
+            IsBusy = false;
+        }
+    }
+}

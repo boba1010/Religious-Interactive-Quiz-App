@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ReligiousQuizCompetitionWinUI.ViewModels"
-    d:DataContext="{d:DesignInstance Type=vm:UserViewModel}"
     mc:Ignorable="d">
 
     <Grid
@@ -19,43 +18,44 @@
         </Grid.RowDefinitions>
 
         <StackPanel
-            Visibility="{Binding NotBusyState}"
+            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
             VerticalAlignment="Center"
             Spacing="15">
             <TextBox 
                 Style="{StaticResource StretchTextBoxStyle}"
                 PlaceholderText="ادخل اسمك"
-                Text="{Binding RequestUserSignup.FullName, Mode=TwoWay}" />
+                Text="{x:Bind ViewModel.RequestUserSignup.FullName, Mode=TwoWay}" />
             <TextBox
                 Style="{StaticResource StretchTextBoxStyle}"
                 PlaceholderText="انشئ اسم مستخدم جديد"
-                Text="{Binding RequestUserSignup.Username, Mode=TwoWay}" />
+                Text="{x:Bind ViewModel.RequestUserSignup.Username, Mode=TwoWay}" />
             <TextBox 
                 Style="{StaticResource StretchTextBoxStyle}"
                 PlaceholderText="انشئ كلمة مرور جديدة"
-                Text="{Binding RequestUserSignup.Password, Mode=TwoWay}" />            
+                Text="{x:Bind ViewModel.RequestUserSignup.Password, Mode=TwoWay}" />            
         </StackPanel>
 
         <StackPanel
-            Visibility="{Binding NotBusyState}"
+            Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}"
             Spacing="10"
             VerticalAlignment="Bottom"
             Grid.Row="1">
             <Button 
                 Style="{StaticResource StretchButtonStyle}"
-                Command="{Binding SignupCommand}"
+                Command="{x:Bind ViewModel.SignupCommand, Mode=OneWay}"
                 Content="انشئ حساب جديد" />
             <Button 
                 Style="{StaticResource StretchButtonStyle}"
+                Click="OnLoginButtonClick"
                 Content="لديك حساب؟ سجل دخول" />            
         </StackPanel>
 
         <Grid
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Visibility="{Binding BusyState}">
+            Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay}">
             <ProgressRing 
-                IsActive="{Binding IsBusy}"
+                IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
                 IsIndeterminate="True" />
         </Grid>
     </Grid>
