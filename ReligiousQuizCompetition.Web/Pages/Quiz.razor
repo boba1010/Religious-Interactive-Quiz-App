@@ -64,11 +64,12 @@
         if (response.IsSuccess)
         {
             quiz = response.Data;
-            ErrorMsg = response.ErrorMessage;
             IsBusy = false;
             return;
         }
 
+        ErrorMsg = response.ErrorMessage;
+        Console.WriteLine(response.ErrorMessage);
         IsBusy = false;
     }
 
