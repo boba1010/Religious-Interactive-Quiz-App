@@ -7,8 +7,7 @@ namespace ReligiousQuizCompetition.Shared.Services
 {
     public class ApiClient(HttpClient httpClient, ITokenService tokenService)
     {
-        private readonly string url = "https://religious-interactive-quiz.onrender.com/api/user";
-        private readonly string apiUrl = "";
+        private readonly string url = "https://religious-interactive-quiz-api.onrender.com/api/user";
 
         public async Task<RefreshTokenResponse?> RefreshSessionAsync(RequestRefreshToken request)
         {
