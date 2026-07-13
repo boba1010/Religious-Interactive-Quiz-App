@@ -8,11 +8,26 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ReligiousQuizCompetition.API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialAivenSchema : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AdminUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Username = table.Column<string>(type: "text", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    Salt = table.Column<byte[]>(type: "bytea", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminUsers", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Quizzes",
                 columns: table => new
@@ -73,8 +88,7 @@ namespace ReligiousQuizCompetition.API.Migrations
                     Choices = table.Column<string[]>(type: "text[]", nullable: true),
                     QuestionType = table.Column<int>(type: "integer", nullable: false),
                     Score = table.Column<int>(type: "integer", nullable: false),
-                    Answer = table.Column<string>(type: "text", nullable: false),
-                    SelectedChoice = table.Column<string>(type: "text", nullable: true)
+                    Answer = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -96,6 +110,9 @@ namespace ReligiousQuizCompetition.API.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AdminUsers");
+
             migrationBuilder.DropTable(
                 name: "Question");
 

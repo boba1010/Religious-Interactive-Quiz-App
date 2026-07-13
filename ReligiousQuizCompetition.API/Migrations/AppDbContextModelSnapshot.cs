@@ -18,10 +18,35 @@ namespace ReligiousQuizCompetition.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ReligiousQuizCompetition.API.Models.AdminUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("Salt")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdminUsers");
+                });
 
             modelBuilder.Entity("ReligiousQuizCompetition.API.Models.Question", b =>
                 {
@@ -50,9 +75,6 @@ namespace ReligiousQuizCompetition.API.Migrations
 
                     b.Property<int>("Score")
                         .HasColumnType("integer");
-
-                    b.Property<string>("SelectedChoice")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
