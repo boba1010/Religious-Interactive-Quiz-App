@@ -84,47 +84,60 @@ using var scope = app.Services.CreateScope();
 try
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    Console.WriteLine("--> Applying pending database migrations...");
     await dbContext.Database.MigrateAsync();
-}
-catch { }
+    Console.WriteLine("--> Migrations applied successfully!");
 
-var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    // SEEDING LOGIC LIVES INSIDE THE TRY BLOCK NOW
+    var adminUsername = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
+    var adminHashedPassword = Environment.GetEnvironmentVariable("ADMIN_HASHED_PASSWORD");
+    var adminSaltRawString = Environment.GetEnvironmentVariable("ADMIN_SALT");
 
-var adminUsername = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
-var adminHashedPassword = Environment.GetEnvironmentVariable("ADMIN_HASHED_PASSWORD");
-var adminSaltRawString = Environment.GetEnvironmentVariable("ADMIN_SALT");
-
-if (!string.IsNullOrEmpty(adminUsername) &&
-    !string.IsNullOrEmpty(adminHashedPassword) &&
-    !string.IsNullOrEmpty(adminSaltRawString))
-{
-    byte[] adminSaltBytes = [.. adminSaltRawString
-        .Replace("[", "")
-        .Replace("]", "")
-        .Replace(" ", "")
-        .Split(',')
-        .Select(byte.Parse)];
-
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    var adminExists = await dbContext.AdminUsers.AnyAsync(a => a.Username == adminUsername);
-    if (!adminExists)
+    if (!string.IsNullOrEmpty(adminUsername) &&
+        !string.IsNullOrEmpty(adminHashedPassword) &&
+        !string.IsNullOrEmpty(adminSaltRawString))
     {
-        var newAdmin = new AdminUser
+        byte[] adminSaltBytes = [.. adminSaltRawString
+            .Replace("[", "")
+            .Replace("]", "")
+            .Replace(" ", "")
+            .Split(',')
+            .Select(byte.Parse)];
+
+        var adminExists = await dbContext.AdminUsers.AnyAsync(a => a.Username == adminUsername);
+        if (!adminExists)
         {
-            Username = adminUsername,
-            Password = adminHashedPassword,
-            Salt = adminSaltBytes
-        };
+            var newAdmin = new AdminUser
+            {
+                Username = adminUsername,
+                Password = adminHashedPassword,
+                Salt = adminSaltBytes
+            };
 
-        dbContext.AdminUsers.Add(newAdmin);
-        await dbContext.SaveChangesAsync();
+            dbContext.AdminUsers.Add(newAdmin);
+            await dbContext.SaveChangesAsync();
 
-        Console.WriteLine("Admin account seeded successfully into the database.");
+            Console.WriteLine("--> Admin account seeded successfully into the database.");
+        }
+    }
+    else
+    {
+        // This will now be cleanly caught by the catch block below instead of crashing the app
+        throw new Exception("ADMIN USER DATA IS MISSING FROM ENVIRONMENT VARIABLES!");
     }
 }
-else
-    throw new Exception("ADMIN USER DATA IS MISSING!");
+catch (Exception ex)
+{
+    // NEVER leave a catch block completely empty in production startup code!
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"--> CRITICAL STARTUP ERROR: {ex.Message}");
+    if (ex.InnerException != null)
+    {
+        Console.WriteLine($"--> Inner Exception: {ex.InnerException.Message}");
+    }
+    Console.ResetColor();
+}
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
