@@ -14,5 +14,6 @@
         public QuestionType QuestionType { get; set; }
 
         public string Answer { get; set; } = null!;
+        public int Score { get; set; }
     }
 }

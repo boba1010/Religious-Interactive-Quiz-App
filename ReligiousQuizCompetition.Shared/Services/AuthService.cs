@@ -7,7 +7,8 @@ namespace ReligiousQuizCompetition.Shared.Services
 {
     public class AuthService(HttpClient httpClient, ITokenService tokenService, ApiClient apiClient)
     {
-        private const string url = "https://religious-interactive-quiz-api.onrender.com/api/user";
+        //private const string url = "https://religious-interactive-quiz-api.onrender.com/api/user";
+        private const string url = "https://localhost:7242/api/user";
 
         public async Task<ServiceResult<UserLoginResponse>> LoginAsync(RequestUserLogin request)
         {

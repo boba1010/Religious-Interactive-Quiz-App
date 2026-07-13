@@ -1,0 +1,246 @@
+﻿@page "/create-quiz"
+@using ReligiousQuizCompetition.Admin.Shared.Models
+@using Admin.Shared.Contracts.Requests
+@using ReligiousQuizCompetition.Admin.Web.Services
+@inject IJSRuntime JS
+@inject QuizService QuizService
+@inject NavigationManager Nav
+@inject AuthService AuthService
+
+@if (!IsBusy)
+{
+    <div class="container max-w-4xl pt-5 mt-3 px-3 px-sm-4">
+
+        <div class="text-center text-md-start mb-4 pb-3 border-bottom">
+            <h2 class="fw-bold text-dark mb-1 fs-3 fs-md-2">Create New Quiz</h2>
+            <p class="text-muted small mb-0">Configure your quiz settings and build your questions below.</p>
+        </div>
+
+        <EditForm Model="@newQuiz" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="alert alert-danger rounded-3 m-2 small" />
+
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-white">
+                <h5 class="fw-semibold text-secondary mb-3 small text-uppercase tracking-wider">General Settings</h5>
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating">
+                            <InputDate @bind-Value="CreationDateLocal" class="form-control" Type="InputDateType.DateTimeLocal" id="creationDate" placeholder="Creation Date" />
+                            <label for="creationDate">Creation Date & Time</label>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-floating">
+                            <InputDate @bind-Value="ExpirationDateLocal" class="form-control" Type="InputDateType.DateTimeLocal" id="expirationDate" placeholder="Expiration Date" />
+                            <label for="expirationDate">Expiration Date & Time</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+                <h4 class="fw-bold text-dark mb-0 fs-5 fs-md-4">Quiz Questions</h4>
+                <span class="badge bg-light text-dark border px-2 py-1.5 rounded-pill fw-medium small">
+                    Count: @newQuiz.Questions.Count
+                </span>
+            </div>
+
+            @for (int i = 0; i < newQuiz.Questions.Count; i++)
+            {
+                var questionIndex = i;
+                var currentQuestion = newQuiz.Questions[questionIndex];
+
+                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-white position-relative overflow-hidden">
+                    <div class="position-absolute top-0 start-0 end-0 bg-primary" style="height: 4px;"></div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold text-primary fs-5">#@(questionIndex + 1)</span>
+                        <button type="button" class="btn btn-link text-danger p-0 text-decoration-none d-flex align-items-center gap-1 small fw-medium" @onclick="() => RemoveQuestion(questionIndex)">
+                            <svg xmlns="http://w3.org" width="14" height="14" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                            </svg>
+                            Delete
+                        </button>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-9">
+                            <label class="form-label text-secondary small fw-semibold mb-1">Question Text</label>
+                            <InputText @bind-Value="currentQuestion.QuestionName" class="form-control border-2 fs-6" placeholder="" />
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label text-secondary small fw-semibold mb-1">Score Points</label>
+                            <InputNumber @bind-Value="currentQuestion.Score" class="form-control border-2 text-md-center" min="1" />
+                        </div>
+                    </div>
+
+                    <div class="mb-4 col-12 col-md-6 p-0">
+                        <label class="form-label text-secondary small fw-semibold mb-1">Question Type</label>
+                        <InputSelect @bind-Value="currentQuestion.QuestionType" class="form-select border-2">
+                            @foreach (var type in Enum.GetValues<QuestionType>())
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </InputSelect>
+                    </div>
+
+                    @if (currentQuestion.QuestionType == QuestionType.MultipleChoices)
+                    {
+                        <div class="p-3 mb-3 border border-light-subtle rounded-4 bg-light bg-opacity-50 mx-n1">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <h6 class="fw-bold text-dark mb-0 small">Multiple Choice Options</h6>
+                            </div>
+
+                            @if (currentQuestion.Choices == null || currentQuestion.Choices.Length == 0)
+                            {
+                                currentQuestion.Choices = new string[] { "", "", "", "" };
+                            }
+
+                            <div class="row g-2">
+                                @for (int c = 0; c < currentQuestion.Choices.Length; c++)
+                                {
+                                    var choiceIndex = c;
+                                    <div class="col-12 col-md-6">
+                                        <div class="input-group shadow-sm rounded-3 overflow-hidden border">
+                                            <span class="input-group-text border-0 bg-primary text-white px-3 fw-bold small">@((char)('A' + choiceIndex))</span>
+                                            <input type="text" class="form-control border-0 py-2 px-3 fs-6" placeholder="Enter option..." @bind="currentQuestion.Choices[choiceIndex]" />
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="mb-1">
+                        <label class="form-label text-secondary small fw-semibold mb-1">Correct Answer</label>
+                        <InputText @bind-Value="currentQuestion.Answer" class="form-control border-2 fs-6" placeholder="Type or copy the exact correct answer here..." />
+                        @if (currentQuestion.QuestionType == QuestionType.MultipleChoices)
+                        {
+                            <div class="form-text text-muted d-flex align-items-start gap-1 mt-1.5 xsmall">
+                                <svg xmlns="http://w3.org" width="12" height="12" fill="currentColor" class="bi bi-info-circle mt-0.5 flex-shrink-0" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                    <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                                </svg>
+                                <span>Tip: Must match a multiple choice string exactly.</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2 mt-4 mb-5 pt-3 border-top">
+                <button type="button" class="btn btn-outline-primary rounded-pill px-4 py-2.5 fw-medium d-flex align-items-center justify-content-center gap-2 order-2 order-md-1" @onclick="AddQuestion">
+                    <svg xmlns="http://w3.org" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                    </svg>
+                    Add New Question
+                </button>
+
+                <button type="submit" class="btn btn-primary ms-md-auto rounded-pill px-5 py-2.5 fw-bold shadow order-1 order-md-2">
+                    Save Complete Quiz
+                </button>
+            </div>
+        </EditForm>
+    </div>    
+}
+else
+{
+    <div class="position-absolute top-50 start-50 translate-middle text-center">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+
+
+@code {
+    private Quiz newQuiz = new() 
+    { 
+        Questions = [], 
+        CreationDate = DateTime.UtcNow,
+        ExpirationDate = DateTime.UtcNow.AddHours(12)
+    };
+
+    private string ErrorMsg { get; set; }
+
+    private bool IsBusy { get; set; }
+
+    private DateTime CreationDateLocal { get; set; }
+
+    private DateTime ExpirationDateLocal { get; set; }
+
+    protected override void OnInitialized()
+    {
+        AddQuestion();
+    }
+
+    private void AddQuestion()
+    {
+        newQuiz.Questions.Add(new Question 
+        { 
+            QuestionType = QuestionType.MultipleChoices,
+            Choices = new string[4] { "", "", "", "" }, // Sets up 4 text spots ready to bind
+            Score = 10
+        });
+    }
+
+    private void RemoveQuestion(int index)
+    {
+        if (newQuiz.Questions.Count > 1)
+        {
+            newQuiz.Questions.RemoveAt(index);
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsBusy = true;
+
+        var response = await AuthService.VerifyAdminUserAsync();
+        AdminStatus.IsLoggedIn = response.Data;
+
+        if (!AdminStatus.IsLoggedIn)
+        {
+            IsBusy = false;
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        // Convert initial database payload defaults using your browser timezone context
+        string openStr = await JS.InvokeAsync<string>("timeZoneExtensions.convertToLocalString", newQuiz.CreationDate);
+        string closeStr = await JS.InvokeAsync<string>("timeZoneExtensions.convertToLocalString", newQuiz.ExpirationDate);
+
+        CreationDateLocal = DateTime.Parse(openStr);
+        ExpirationDateLocal = DateTime.Parse(closeStr);
+
+        IsBusy = false;
+    }
+
+    private async Task HandleSubmit()
+    {
+        IsBusy = true;
+
+        newQuiz.CreationDate = DateTime.SpecifyKind(CreationDateLocal, DateTimeKind.Local).ToUniversalTime();
+        newQuiz.ExpirationDate = DateTime.SpecifyKind(ExpirationDateLocal, DateTimeKind.Local).ToUniversalTime();
+
+        var request = new RequestQuizCreation
+        {
+            CreationDate = newQuiz.CreationDate,
+            ExpirationDate = newQuiz.ExpirationDate,
+            Questions = newQuiz.Questions
+        };
+
+        var response = await QuizService.CreateQuiz(request);
+        if (response.IsSuccess)
+        {
+            IsBusy = false;
+            Nav.NavigateTo("/");
+            return;
+        }
+
+        ErrorMsg = response.ErrorMessage;
+
+        IsBusy = false;
+    }
+}

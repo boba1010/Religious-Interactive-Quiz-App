@@ -7,6 +7,7 @@ namespace ReligiousQuizCompetition.API.DbContexts
     {
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<AdminUser> AdminUsers { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

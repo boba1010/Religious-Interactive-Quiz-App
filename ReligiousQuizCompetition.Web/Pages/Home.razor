@@ -23,8 +23,6 @@
     protected override async Task OnInitializedAsync()
     {
         var response = await AuthService.VerifyUserAsync();
-        Console.WriteLine($"Success: {response.IsSuccess}");
-        Console.WriteLine($"Success: {response.Data}");
         UserStatus.IsLoggedIn = response.Data;
     }
 }

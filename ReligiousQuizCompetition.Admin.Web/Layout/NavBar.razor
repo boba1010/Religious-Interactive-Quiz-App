@@ -1,0 +1,90 @@
+﻿@implements IDisposable
+@inject NavigationManager Navigation
+
+<nav class="navbar navbar-light bg-light border-bottom px-3 py-2 fixed-top">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+        <!-- Right Side: Brand Logo/Name (Keeps layout balanced on mobile) -->
+        <a class="navbar-brand m-0 fw-bold fs-6 order-last order-md-first" href="">
+            Quiz Website: Admin
+        </a>
+
+        @if (IsVisible)
+        {
+            <!-- Left Side: Actions (Switches dynamically between Text and Icons) -->
+            <div class="d-flex align-items-center gap-2 order-first order-md-last">
+                @if (AdminStatus.IsLoggedIn)
+                {
+                    <NavLink class="btn btn-primary btn-sm px-3 d-flex align-items-center gap-1" href="create-quiz">
+                        <!-- Icon for mobile -->
+                        <i class="bi bi-plus-circle d-md-none fs-5"></i>
+                        <!-- Text for desktop -->
+                        <span class="d-none d-md-inline">أضف اختبارًا</span>
+                    </NavLink>
+
+                    <button class="btn btn-outline-danger btn-sm px-3 d-flex align-items-center gap-1" @onclick="OnSignoutButtonClick">
+                        <!-- Icon shown on mobile -->
+                        <i class="bi bi-box-arrow-left d-md-none fs-5"></i>
+                        <!-- Text shown on desktop -->
+                        <span class="d-none d-md-inline">سجل خروج</span>
+                    </button>                    
+                }
+            </div>
+        }
+
+    </div>
+</nav>
+
+@code {
+    private bool IsVisible { get; set; }
+
+    private async Task OnSignoutButtonClick()
+    {
+        AdminStatus.Signout();
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        // 1. Subscribe to the event when the component initializes
+        Navigation.LocationChanged += OnLocationChanged;
+        AdminStatus.OnStatusChanged += RefreshUI;
+
+        CheckNavbarVisibility(Navigation.Uri);
+    }
+
+    private void RefreshUI()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        CheckNavbarVisibility(e.Location);
+
+        StateHasChanged();
+    }
+
+    private void CheckNavbarVisibility(string url)
+    {
+        // Convert full URL to relative path (e.g., "https://localhost/login" becomes "/login")
+        var relativePath = Navigation.ToBaseRelativePath(url).ToLower();
+
+        // Hide navbar if the path is "login" or "signup"
+        // (Handles root cases like "login/" or queries like "login?returnUrl=...")
+        if (relativePath.StartsWith("login") || relativePath.StartsWith("signup"))
+        {
+            IsVisible = false;
+        }
+        else
+        {
+            IsVisible = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+        AdminStatus.OnStatusChanged -= RefreshUI;
+    }
+}

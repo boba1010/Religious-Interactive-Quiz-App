@@ -28,16 +28,20 @@ namespace ReligiousQuizCompetition.API.Controllers
         {
             var quiz = dbContext.Quizzes
                 .Include(q => q.Questions)
-                .Where(q => q.ExpirationDate < DateTime.UtcNow)
                 .FirstOrDefault();
 
             if (quiz == null)
-                return Ok("There are no quizzes for today.");
+                return NoContent();
+
+            if (quiz.ExpirationDate <= DateTime.UtcNow)
+                return NoContent();
 
             var quizDTO = new QuizDTO()
             {
                 Id = quiz.Id,
                 Questions = [],
+                CreationDate = quiz.CreationDate,
+                ExpirationDate = quiz.ExpirationDate
             };
 
             foreach (var question in quiz.Questions)
@@ -47,7 +51,8 @@ namespace ReligiousQuizCompetition.API.Controllers
                     Id = question.Id,
                     Choices = question.Choices,
                     QuestionName = question.QuestionName,
-                    QuestionType = (Shared.DTOs.QuestionType)question.QuestionType
+                    QuestionType = (Shared.DTOs.QuestionType)question.QuestionType,
+                    Score = question.Score,
                 });
             }
 
@@ -66,7 +71,7 @@ namespace ReligiousQuizCompetition.API.Controllers
                 .FirstOrDefault(q => q.Id == request.Id);
             if (quiz == null)
                 return NotFound("Quiz cannot be found.");
-            if (quiz.ExpirationDate < DateTime.UtcNow)
+            if (quiz.ExpirationDate <= DateTime.UtcNow)
                 return BadRequest("The Quiz duo time is over");
 
             if (user.AnsweredQuizzes.Contains(quiz.Id))
@@ -86,6 +91,7 @@ namespace ReligiousQuizCompetition.API.Controllers
             }
 
             user.Score += score;
+            user.AnsweredQuizzes.Add(quiz.Id);
             dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();
 

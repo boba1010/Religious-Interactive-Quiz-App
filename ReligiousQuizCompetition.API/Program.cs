@@ -32,7 +32,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("BlazorWasmPolicy", policy =>
     {
-        policy.WithOrigins("https://religious-interactive-quiz.onrender.com")
+        policy.WithOrigins(
+            "https://localhost:7150",
+            "https://religious-interactive-quiz.onrender.com",
+            "https://localhost:7284"
+            )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -76,35 +80,50 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-await dbContext.Database.MigrateAsync();
+try
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
+catch { }
 
 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-List<Question> questions = 
-[
-    new()
-    {
-        Answer = "2",
-        QuestionName = "1 + 1 = ?",
-        QuestionType = QuestionType.EssayQuestion
-    },
-    new()
-    {
-        Answer = "5",
-        QuestionName = "2 + 3 = ?",
-        QuestionType = QuestionType.EssayQuestion
-    },
-];
-Quiz quiz = new()
-{
-    Questions = questions,
-    CreationDate = DateTime.UtcNow,
-    ExpirationDate = DateTime.UtcNow.AddHours(12)
-};
+var adminUsername = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
+var adminHashedPassword = Environment.GetEnvironmentVariable("ADMIN_HASHED_PASSWORD");
+var adminSaltRawString = Environment.GetEnvironmentVariable("ADMIN_SALT");
 
-context.Quizzes.Add(quiz);
-await context.SaveChangesAsync();
+if (!string.IsNullOrEmpty(adminUsername) &&
+    !string.IsNullOrEmpty(adminHashedPassword) &&
+    !string.IsNullOrEmpty(adminSaltRawString))
+{
+    byte[] adminSaltBytes = [.. adminSaltRawString
+        .Replace("[", "")
+        .Replace("]", "")
+        .Replace(" ", "")
+        .Split(',')
+        .Select(byte.Parse)];
+
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    var adminExists = await dbContext.AdminUsers.AnyAsync(a => a.Username == adminUsername);
+    if (!adminExists)
+    {
+        var newAdmin = new AdminUser
+        {
+            Username = adminUsername,
+            Password = adminHashedPassword,
+            Salt = adminSaltBytes
+        };
+
+        dbContext.AdminUsers.Add(newAdmin);
+        await dbContext.SaveChangesAsync();
+
+        Console.WriteLine("Admin account seeded successfully into the database.");
+    }
+}
+else
+    throw new Exception("ADMIN USER DATA IS MISSING!");
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();

@@ -1,0 +1,74 @@
+﻿@page "/questions"
+@using ReligiousQuizCompetition.Admin.Shared.Models
+@using Admin.Web.Services
+@inject QuizService QuizService
+@inject AuthService AuthService
+@inject NavigationManager Nav
+
+<div class="responsive-table mt-5 p-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Question Name</th>
+                <th>Choices(optional)</th>
+                <th>Question Type</th>
+                <th>Score</th>
+                <th>Answer</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var question in questions)
+            {
+                <tr>
+                    <td>@question.Id</td>
+                    <td>@question.QuestionName</td>
+                    <td>
+                        @if (question.Choices != null && question.Choices?.Length != 0)
+                        {
+                            @foreach (var choice in question.Choices)
+                            {
+                                <span>@choice | </span>
+                            }                            
+                        }
+                        No choices
+                    </td>
+                    <td>@question.QuestionType</td>
+                    <td>@question.Score</td>
+                    <td>@question.Answer</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "quizid")]
+    public int QuizId { get; set; }
+    private List<Question> questions { get; set; } = [];
+    private bool IsBusy { get; set; }
+    private string ErrorMsg { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await AuthService.VerifyAdminUserAsync();
+        AdminStatus.IsLoggedIn = response.Data;
+
+        if (!AdminStatus.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        var quizResponse = await QuizService.GetQuizAsync(QuizId);
+        if (!quizResponse.IsSuccess)
+        {
+            ErrorMsg = quizResponse.ErrorMessage;
+            return;
+        }
+
+        questions = quizResponse?.Data?.Questions;
+    }
+}

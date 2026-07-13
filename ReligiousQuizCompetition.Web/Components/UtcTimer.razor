@@ -1,0 +1,104 @@
+﻿@inject IJSRuntime JSRuntime
+@using System.Timers
+@implements IDisposable
+
+<span class="utc-timer-display" style="font-family: monospace;">
+    @if (_isInitialized)
+    {
+        @_remainingTime.ToString(@"hh\:mm\:ss")
+    }
+    else
+    {
+        <span>Calculating...</span>
+    }
+</span>
+
+@code {
+    [Parameter]
+    public DateTime StartTimeUtc { get; set; }
+
+    [Parameter]
+    public DateTime EndTimeUtc { get; set; }
+
+    [Parameter]
+    public EventCallback OnTimerFinished { get; set; }
+
+    private TimeSpan _remainingTime;
+    private Timer? _timer;
+    private TimeSpan _browserOffset = TimeSpan.Zero;
+    private bool _isInitialized = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Grab the browser's real-time zone offset in minutes
+                int offsetInMinutes = await JSRuntime.InvokeAsync<int>("eval", "new Date().getTimezoneOffset()");
+
+                // Invert JS offset values to match .NET expectations (e.g., GMT+2 returns -120)
+                _browserOffset = TimeSpan.FromMinutes(offsetInMinutes * -1);
+
+                _isInitialized = true;
+                UpdateCountdown();
+
+                _timer = new Timer(1000);
+                _timer.Elapsed += OnTimerElapsed;
+                _timer.Start();
+
+                StateHasChanged();
+            }
+            catch
+            {
+                _isInitialized = true;
+                UpdateCountdown();
+            }
+        }
+    }
+
+    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        UpdateCountdown();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateCountdown()
+    {
+        // 2. Map all timestamps uniformly to the user's local machine time
+        DateTime browserLocalNow = DateTime.UtcNow.Add(_browserOffset);
+        DateTime browserLocalStart = StartTimeUtc.Add(_browserOffset);
+        DateTime browserLocalEnd = EndTimeUtc.Add(_browserOffset);
+
+        // Safeguard: If the user opens the page *before* the start time has officially begun
+        if (browserLocalNow < browserLocalStart)
+        {
+            _remainingTime = browserLocalEnd - browserLocalStart;
+        }
+        // If the current time has bypassed the target end time
+        else if (browserLocalNow >= browserLocalEnd)
+        {
+            _remainingTime = TimeSpan.Zero;
+
+            if (_timer is not null && _timer.Enabled)
+            {
+                _timer.Stop();
+                InvokeAsync(() => OnTimerFinished.InvokeAsync());
+            }
+        }
+        // Active ticking state
+        else
+        {
+            _remainingTime = browserLocalEnd - browserLocalNow;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_timer != null)
+        {
+            _timer.Elapsed -= OnTimerElapsed;
+            _timer.Dispose();
+        }
+    }
+}

@@ -4,6 +4,7 @@
 {
     case QuestionType.MultipleChoices:
         <div class="mb-2 p-3">
+            <h5 class="text-end">نقاط @Question.Score</h5>
             <h5>@Question.QuestionName</h5>
             @foreach (var option in Question?.Choices)
             {
@@ -16,6 +17,7 @@
         break;
 
     case QuestionType.EssayQuestion:
+        <label class="text-start w-100">نقاط @Question.Score</label>
         <div class="mb-2 p-3">
             <label class="form-label h5">@Question.QuestionName</label>
             <input type="text" class="form-control" placeholder="اجابتك..." @onchange="(e) => OnInputChanged(e.Value?.ToString())" />

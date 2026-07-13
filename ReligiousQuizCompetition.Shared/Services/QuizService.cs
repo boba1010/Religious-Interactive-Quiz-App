@@ -7,7 +7,8 @@ namespace ReligiousQuizCompetition.Shared.Services;
 
 public class QuizService(ApiClient apiClient)
 {
-    private const string url = "https://religious-interactive-quiz-api.onrender.com/api/quiz";
+    //private const string url = "https://religious-interactive-quiz-api.onrender.com/api/quiz";
+    private const string url = "https://localhost:7242/api/quiz";
 
     public async Task<ServiceResult<QuizDTO>> GetQuizAsync()
     {
@@ -15,15 +16,17 @@ public class QuizService(ApiClient apiClient)
         {
             var response = await apiClient.SendAsync(client => client.GetAsync(url));
 
+            var text = await response.Content.ReadAsStringAsync();
+
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 return ServiceResult<QuizDTO>
                     .Failure("UnAuthorized");
             }
             else if (!response.IsSuccessStatusCode)
-            {
                 return ServiceResult<QuizDTO>.Failure("Error: Something wrong has happened while receiving the data");
-            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return ServiceResult<QuizDTO>.Failure("There are no quizzes for today.");
 
             var result = await response.Content.ReadFromJsonAsync<QuizDTO>();
             return ServiceResult<QuizDTO>.Success(result);

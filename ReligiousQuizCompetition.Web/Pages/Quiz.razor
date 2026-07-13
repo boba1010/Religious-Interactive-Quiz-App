@@ -5,6 +5,7 @@
 @using Shared.Contracts.Requests
 @using Services
 @inject QuizService QuizService
+@inject AuthService AuthService
 @inject NavigationManager Nav
 @inject ILocalStorage LocalStorage
 
@@ -16,6 +17,9 @@
         <div class="flex-grow-1 overflow-auto mb-3">
             @if (quiz != null)
             {
+                <div class="text-center w-100">
+                    <UtcTimer StartTimeUtc="quiz.CreationDate" EndTimeUtc="quiz.ExpirationDate" />
+                </div>
                 @foreach (var question in quiz.Questions)
                 {
                     <QuestionDisplay Question="question" OnAnswerSelected="HandleAnswerSelected" />
@@ -53,6 +57,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var serviceResult = await AuthService.VerifyUserAsync();
+        UserStatus.IsLoggedIn = serviceResult.Data;
+
         if (!UserStatus.IsLoggedIn)
         {
             Nav.NavigateTo("/login");

@@ -17,6 +17,5 @@
         public int Score { get; set; }
 
         public string Answer { get; set; } = null!;
-        public string? SelectedChoice { get; set; }
     }
 }

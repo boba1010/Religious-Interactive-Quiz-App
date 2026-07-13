@@ -4,6 +4,8 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="ReligiousQuizCompetition.Admin.Shared/ReligiousQuizCompetition.Admin.Shared.csproj" Id="88b52edc-42ca-4c26-8a25-78db59587455" />
+  <Project Path="ReligiousQuizCompetition.Admin.Web/ReligiousQuizCompetition.Admin.Web.csproj" Id="c7909920-4a05-4a77-ab42-bf3c8e9fd42e" />
   <Project Path="ReligiousQuizCompetition.API/ReligiousQuizCompetition.API.csproj" Id="c3ce1814-154d-44a6-bff1-585c7eef6504" />
   <Project Path="ReligiousQuizCompetition.Shared/ReligiousQuizCompetition.Shared.csproj" Id="4c4a0eab-d28f-42e2-ab01-43bfbe4f66e6" />
   <Project Path="ReligiousQuizCompetition.Web/ReligiousQuizCompetition.Web.csproj" Id="26f5f031-809a-49bc-bbd6-c81175a57f51" />
