@@ -7,8 +7,8 @@ namespace ReligiousQuizCompetition.Shared.Services;
 
 public class QuizService(ApiClient apiClient)
 {
-    //private const string url = "https://religious-interactive-quiz-api.onrender.com/api/quiz";
-    private const string url = "https://localhost:7242/api/quiz";
+    private const string url = "https://religious-interactive-quiz-api.onrender.com/api/quiz";
+    //private const string url = "https://localhost:7242/api/quiz";
 
     public async Task<ServiceResult<QuizDTO>> GetQuizAsync()
     {
