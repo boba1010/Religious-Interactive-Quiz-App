@@ -7,8 +7,8 @@ namespace ReligiousQuizCompetition.Admin.Web.Services
 {
     public class QuizService(ApiClient apiClient)
     {
-        //private readonly string url = "https://religious-interactive-quiz-api.onrender.com/api/admin/quizzes";
-        private readonly string url = "https://localhost:7242/api/admin/quizzes";
+        private readonly string url = "https://religious-interactive-quiz-api.onrender.com/api/admin/quizzes";
+        //private readonly string url = "https://localhost:7242/api/admin/quizzes";
 
         public async Task<ServiceResult<bool>> UpdateQuiz(RequestQuizUpdate request)
         {

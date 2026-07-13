@@ -35,7 +35,8 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "https://localhost:7150",
             "https://religious-interactive-quiz.onrender.com",
-            "https://localhost:7284"
+            "https://localhost:7284",
+            "https://religious-interactive-quiz-app.onrender.com"
             )
               .AllowAnyHeader()
               .AllowAnyMethod();

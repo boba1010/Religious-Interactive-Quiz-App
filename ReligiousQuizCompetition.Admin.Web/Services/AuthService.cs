@@ -8,8 +8,8 @@ namespace ReligiousQuizCompetition.Admin.Web.Services
 {
     public class AuthService(ITokenService tokenService, HttpClient httpClient, ApiClient apiClient)
     {
-        //private const string url = "https://religious-interactive-quiz-api.onrender.com/api/admin";
-        private const string url = "https://localhost:7242/api/admin";
+        private const string url = "https://religious-interactive-quiz-api.onrender.com/api/admin";
+        //private const string url = "https://localhost:7242/api/admin";
 
         public async Task<ServiceResult<AdminLoginResponse>> LoginAsync(RequestAdminLogin request)
         {
