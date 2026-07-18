@@ -89,7 +89,6 @@ try
     await dbContext.Database.MigrateAsync();
     Console.WriteLine("--> Migrations applied successfully!");
 
-    // SEEDING LOGIC LIVES INSIDE THE TRY BLOCK NOW
     var adminUsername = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
     var adminHashedPassword = Environment.GetEnvironmentVariable("ADMIN_HASHED_PASSWORD");
     var adminSaltRawString = Environment.GetEnvironmentVariable("ADMIN_SALT");

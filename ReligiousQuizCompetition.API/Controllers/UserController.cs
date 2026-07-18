@@ -48,7 +48,6 @@ namespace ReligiousQuizCompetition.API.Controllers
             };
             return Ok(new UserLoginResponse
             {
-                User = userDTO,
                 Token = token,
                 RefreshToken = refreshToken.Token,
             });
