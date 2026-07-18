@@ -141,9 +141,9 @@ catch (Exception ex)
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 
-app.UseRouting();
-
 app.UseCors("BlazorWasmPolicy");
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
